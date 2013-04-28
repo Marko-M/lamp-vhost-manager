@@ -1,7 +1,7 @@
 LAMP virtual host manager
 ==================
 
-This is designed to simplify handling Apache2 virtual hosts on your Debian based Linux operating system.
+This script is created to simplify handling Apache2 virtual hosts on your Debian based Linux operating system.
 
 Usage
 -----
