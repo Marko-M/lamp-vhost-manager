@@ -18,8 +18,8 @@ OPTIONS:
 -u      MySQL administrative user name (optional, ommit to avoid creating database)
 -p      MySQL administrative user password (optional, ommit to avoid creating database)
 
-Examples
---------
+Example
+-------
 Add project named "example":
 
 ```bash
