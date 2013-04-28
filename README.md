@@ -13,13 +13,15 @@ This script requires root access.
 
 OPTIONS:
 
-* -h    Show this message
-* -m    Mode [add|remove]
-* -n    Project name
-* -d    Document root (optional, "/var/www" by default)
-* -t    Simulated top level domain (optional, "loc" by default)
-* -u    MySQL administrative user name (optional, ommit to avoid creating database)
-* -p    MySQL administrative user password (optional, ommit to avoid creating database)
+<pre>
+    -h    Show this message
+    -m    Mode [add|remove]
+    -n    Project name
+    -d    Document root (optional, "/var/www" by default)
+    -t    Simulated top level domain (optional, "loc" by default)
+    -u    MySQL administrative user name (optional, ommit to avoid creating database)
+    -p    MySQL administrative user password (optional, ommit to avoid creating database)
+</pre>
 
 Example
 -------

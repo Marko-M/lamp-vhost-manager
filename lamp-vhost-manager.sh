@@ -48,13 +48,13 @@ function usage() {
   Easily manage LAMP virtual hosts for your web development projects.
 
   OPTIONS:
-    -h      Show this message
-    -m      Mode [add|remove]
-    -n      Project name
-    -d      Document root (optional, "$DOCROOT" by default)
-    -t      Simulated top level domain (optional, "$TLD" by default)
-    -u      MySQL administrative user name (optional, ommit to avoid creating database)
-    -p      MySQL administrative user password (optional, ommit to avoid creating database)
+    -h    Show this message
+    -m    Mode [add|remove]
+    -n    Project name
+    -d    Document root (optional, "$DOCROOT" by default)
+    -t    Simulated top level domain (optional, "$TLD" by default)
+    -u    MySQL administrative user name (optional, ommit to avoid creating database)
+    -p    MySQL administrative user password (optional, ommit to avoid creating database)
 
   Examples:
     -add project named "example":
