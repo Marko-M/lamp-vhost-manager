@@ -31,7 +31,7 @@ OPTIONS:
 
 Example
 -------
-Add project named "example":
+Add project named "example.com":
 
 ```bash
 ./lamp-vhost-manager.sh -m add -n example.com -u mysqladminusername -p mysqladminuserpassword
