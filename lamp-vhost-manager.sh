@@ -5,9 +5,6 @@
 # Default document root (change if neccessary)
 DOCROOT="/var/www"
 
-# Default simulated top level domain (change if neccessary)
-TLD="loc"
-
 # Virtual host name (enter to avoid having to use argument)
 NAME=
 
@@ -45,23 +42,22 @@ function usage() {
   cat << EOF
   Usage: $0 OPTIONS
 
-  Easily manage LAMP virtual hosts for your web development projects.
+  Easily manage LAMP name based virtual hosts for your web development projects.
 
   OPTIONS:
     -h    Show this message
-    -m    Mode [add|remove]
-    -n    Project name
+    -m    Mode (required, "add" or "remove")
+    -n    Project domain name (required, "magento.loc" for example)
     -d    Document root (optional, "$DOCROOT" by default)
-    -t    Simulated top level domain (optional, "$TLD" by default)
     -u    MySQL administrative user name (optional, ommit to avoid creating database)
     -p    MySQL administrative user password (optional, ommit to avoid creating database)
 
   Examples:
     -add project named "example":
-	$0 -m add -n example -u mysqladminusername -p mysqladminuserpassword
+	$0 -m add -n example.com -u mysqladminusername -p mysqladminuserpassword
 
     -Remove project named "example":
-	$0 -m remove -n example -u mysqladminusername -p mysqladminuserpassword
+	$0 -m remove -n example.com -u mysqladminusername -p mysqladminuserpassword
 EOF
     exit 1
 }
@@ -117,8 +113,8 @@ function add() {
 	echo "Creating \"$VHOSTFILE\"..."
 cat > $VHOSTFILE <<EOF
 <VirtualHost *:80>
-    ServerAdmin webmaster@$NAME.$TLD
-    ServerName $NAME.$TLD
+    ServerAdmin webmaster@$NAME
+    ServerName $NAME
 
     DocumentRoot $VHOSTDOCROOT
     <Directory />
@@ -143,8 +139,8 @@ EOF
     echo "Creating MySQL user and database..."
 mysql "-u$MYSQLU" "-p$MYSQLP" <<QUERY_INPUT
 GRANT USAGE ON * . * TO '$NAME'@'localhost' IDENTIFIED BY '$NAME' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
-CREATE DATABASE IF NOT EXISTS $NAME;
-GRANT ALL PRIVILEGES ON $NAME. * TO '$NAME'@'localhost';
+CREATE DATABASE IF NOT EXISTS \`$NAME\`;
+GRANT ALL PRIVILEGES ON \`$NAME\`. * TO '$NAME'@'localhost';
 QUERY_INPUT
     else
 	echo "Ommit creating MySQL user and database..."
@@ -160,13 +156,13 @@ QUERY_INPUT
 
     # Print results
     echo "PROJECT PATH: $VHOSTDOCROOT"
-    echo "PROJECT URL: http://$NAME.$TLD"
+    echo "PROJECT URL: http://$NAME"
 
     if [[ ! -z $MYSQLU ]] || [[ ! -z $MYSQLP ]]
     then
 	echo "MYSQL USER: $NAME"
 	echo "MYSQL PASSWORD: $NAME"
-	echo "MYSQL DATABASE NAME: $NAME"
+	echo "MYSQL DATABASE: $NAME"
     fi
 }
 
@@ -216,7 +212,7 @@ function remove() {
 mysql "-u$MYSQLU" "-p$MYSQLP" <<QUERY_INPUT
 GRANT USAGE ON * . * TO '$NAME'@'localhost';
 DROP USER '$NAME'@'localhost';
-DROP DATABASE IF EXISTS $NAME;
+DROP DATABASE IF EXISTS \`$NAME\`;
 QUERY_INPUT
 	else
 	    "Not removing MySQL \"$NAME\" database and \"$NAME\" user?"
@@ -247,7 +243,7 @@ if [ ! -d $DOCROOT ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:d:t:u:p:" OPTION
+while getopts "hm:n:d:u:p:" OPTION
 do
   case $OPTION in
     h)
@@ -263,9 +259,6 @@ do
     d)
       DOCROOT=$OPTARG
       ;;
-    t)
-      TLD=$OPTARG
-      ;;
     u)
       MYSQLU=$OPTARG
       ;;
@@ -280,7 +273,7 @@ do
 done
 
 # Test for required arguments
-if [[ -z $DOCROOT ]] || [[ -z $NAME ]]  || [[ -z $TLD ]] || [[ $MODE != 'add' && $MODE != 'remove' ]]
+if [[ -z $DOCROOT ]] || [[ -z $NAME ]] || [[ $MODE != 'add' && $MODE != 'remove' ]]
 then
      usage
      exit 1
@@ -293,7 +286,7 @@ VHOSTFILE="/etc/apache2/sites-available/$NAME"
 VHOSTDOCROOT="$DOCROOT/$NAME"
 
 # Virtual host /etc/hosts line
-HOSTSLINE="127.0.0.1 $NAME.$TLD"
+HOSTSLINE="127.0.0.1 $NAME"
 
 # Run in selected mode
 $MODE
