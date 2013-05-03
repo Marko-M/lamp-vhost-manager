@@ -59,7 +59,6 @@ function usage() {
     -Remove project named "example":
 	$0 -m remove -n example.com -u mysqladminusername -p mysqladminuserpassword
 EOF
-    exit 1
 }
 
 # Adds virtual host and optionaly creates database.
