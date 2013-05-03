@@ -1,4 +1,4 @@
-LAMP virtual host manager
+LAMP Vhost Manager
 ==================
 
 Easily manage LAMP name based virtual hosts for your web development projects.
