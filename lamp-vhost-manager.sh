@@ -53,11 +53,11 @@ function usage() {
     -p    MySQL administrative user password (optional, ommit to avoid creating database)
 
   Examples:
-    -add project named "example":
-	$0 -m add -n example.com -u mysqladminusername -p mysqladminuserpassword
+    -add project "example.loc":
+	$0 -m add -n example.loc -u mysqladminusername -p mysqladminuserpassword
 
-    -Remove project named "example":
-	$0 -m remove -n example.com -u mysqladminusername -p mysqladminuserpassword
+    -Remove project "example.loc":
+	$0 -m remove -n example.loc -u mysqladminusername -p mysqladminuserpassword
 EOF
 }
 
