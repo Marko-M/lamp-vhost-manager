@@ -47,7 +47,7 @@ function usage() {
   OPTIONS:
     -h    Show this message
     -m    Mode (required, "add" or "remove")
-    -n    Project domain name (required, "magento.loc" for example)
+    -n    Project domain name (required, "example.loc" for example)
     -d    Document root (optional, "$DOCROOT" by default)
     -u    MySQL administrative user name (optional, ommit to avoid creating database)
     -p    MySQL administrative user password (optional, ommit to avoid creating database)
