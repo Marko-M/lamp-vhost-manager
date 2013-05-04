@@ -22,7 +22,7 @@ OPTIONS:
 <pre>
     -h    Show this message
     -m    Mode [add|remove] (required)
-    -n    Project domain name (required, "magento.loc" for example)
+    -n    Project domain name (required, "example.loc" for example)
     -d    Document root (optional, "/var/www" by default)
     -u    MySQL administrative user name (optional, ommit to avoid creating database)
     -p    MySQL administrative user password (optional, ommit to avoid creating database)
