@@ -7,7 +7,7 @@ Features
 --------
 * Two modes of operation, add and remove project
 * Optionally creates MySQL user and database
-* Detects suphp module to create with proper user and group ownership depending on configurable base document root
+* Detects suphp module to create files with proper user and group ownership depending on configurable base document root
 
 Usage
 -----
@@ -21,12 +21,15 @@ OPTIONS:
 
 <pre>
     -h    Show this message
-    -m    Mode [add|remove] (required)
-    -n    Project domain name (required, "example.loc" for example)
-    -d    Document root (optional, "/var/www" by default)
-    -u    MySQL administrative user name (optional, ommit to avoid creating database)
-    -p    MySQL administrative user password (optional, ommit to avoid creating database)
-
+    -m    Mode (required, "add" or "remove")
+    -n    Project name (required, used as directory name and as domain name if -t is omitted)
+    -t    TLD (optional, provide only if directory name differs from domain name)
+    -d    Document root (optional, "$DOCROOT" by default)
+    -u    MySQL administrative user name (optional, ommit to avoid managing database)
+    -p    MySQL administrative user password (optional, ommit to avoid managing database)
+    -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
+    -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
+    -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
 </pre>
 
 Example

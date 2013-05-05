@@ -59,14 +59,14 @@ function usage() {
   OPTIONS:
     -h    Show this message
     -m    Mode (required, "add" or "remove")
-    -n    Project name (required, directory name and domain name if -t is omitted)
+    -n    Project name (required, used as directory name and as domain name if -t is omitted)
     -t    TLD (optional, provide only if directory name differs from domain name)
     -d    Document root (optional, "$DOCROOT" by default)
     -u    MySQL administrative user name (optional, ommit to avoid managing database)
     -p    MySQL administrative user password (optional, ommit to avoid managing database)
-    -U    Desired MySQL database user (optional, to be used with -u and -p, ommit to use project name as db user)
-    -P    Desired MySQL database password (optional, to be used with -u and -p, ommit to use project name db pass)
-    -N    Desired MySQL database name (optional, to be used with -u and -p, ommit to use project name as db name)
+    -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
+    -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
+    -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
 
   Examples:
     -Add project "example.loc" and create database having "example.loc" user and password and name:
