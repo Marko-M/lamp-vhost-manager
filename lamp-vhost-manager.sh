@@ -5,17 +5,29 @@
 # Default document root (change if neccessary)
 DOCROOT="/var/www"
 
-# Virtual host name (enter to avoid having to use argument)
+# Directory name and domain name if $TLD is empty (enter to avoid having to use this argument)
 NAME=
 
-# Mode, add or remove (enter to avoid having to use argument)
+# Desired top level domain (enter to avoid having to use this argument)
+TLD=
+
+# Mode, add or remove (enter to avoid having to use this argument)
 MODE=
 
-# MySQL admin user name (enter to avoid having to use argument)
+# MySQL admin user name (enter to avoid having to use this argument)
+MYSQLAU=
+
+# MySQL admin user password (enter to avoid having to use this argument)
+MYSQLAP=
+
+# Desired MySQL database user (enter to avoid having to use this argument)
 MYSQLU=
 
-# MySQL admin user password (enter to avoid having to use argument)
+# Desired MySQL database password (enter to avoid having to use this argument)
 MYSQLP=
+
+# Desired MySQL database name (enter to avoid having to use this argument)
+MYSQLN=
 
 ###############################################################################
 
@@ -47,17 +59,33 @@ function usage() {
   OPTIONS:
     -h    Show this message
     -m    Mode (required, "add" or "remove")
-    -n    Project domain name (required, "example.loc" for example)
+    -n    Project name (required, directory name and domain name if -t is omitted)
+    -t    TLD (optional, provide only if directory name differs from domain name)
     -d    Document root (optional, "$DOCROOT" by default)
-    -u    MySQL administrative user name (optional, ommit to avoid creating database)
-    -p    MySQL administrative user password (optional, ommit to avoid creating database)
+    -u    MySQL administrative user name (optional, ommit to avoid managing database)
+    -p    MySQL administrative user password (optional, ommit to avoid managing database)
+    -U    Desired MySQL database user (optional, to be used with -u and -p, ommit to use project name as db user)
+    -P    Desired MySQL database password (optional, to be used with -u and -p, ommit to use project name db pass)
+    -N    Desired MySQL database name (optional, to be used with -u and -p, ommit to use project name as db name)
 
   Examples:
-    -add project "example.loc":
+    -Add project "example.loc" and create database having "example.loc" user and password and name:
 	$0 -m add -n example.loc -u mysqladminusername -p mysqladminuserpassword
 
-    -Remove project "example.loc":
+    -Remove project "example.loc" and optionaly remove database having "example.loc" user and password and name:
 	$0 -m remove -n example.loc -u mysqladminusername -p mysqladminuserpassword
+
+    -Add project "example.loc" using "example" as directory name and "example.loc" as domain without creating database:
+	$0 -m add -n example -t loc
+
+    -Remove project "example.loc" using "example" as directory name and "example.loc" as domain without removing database:
+	$0 -m remove -n example -t loc
+
+    -Add project "example.loc" and create database having "exampledbname" name, "exampledbuser" user and "exampledbpass" password:
+	$0 -m add -n example.loc -U exampledbuser -P exampledbpass -N exampledbname
+
+    -Remove project "example.loc" and optionaly remove database having "exampledbname" name, "exampledbuser" user and "exampledbpass" password:
+	$0 -m remove -n example.loc -U exampledbuser -P exampledbpass -N exampledbname
 EOF
 }
 
@@ -112,8 +140,8 @@ function add() {
 	echo "Creating \"$VHOSTFILE\"..."
 cat > $VHOSTFILE <<EOF
 <VirtualHost *:80>
-    ServerAdmin webmaster@$NAME
-    ServerName $NAME
+    ServerAdmin webmaster@$VHOSTDOMAIN
+    ServerName $VHOSTDOMAIN
 
     DocumentRoot $VHOSTDOCROOT
     <Directory />
@@ -133,13 +161,13 @@ EOF
     fi
 
     # If MySQL credentials are available, use them to create db and user
-    if [[ ! -z $MYSQLU ]] || [[ ! -z $MYSQLP ]]
+    if [[ ! -z $MYSQLAU ]] || [[ ! -z $MYSQLAP ]]
     then
-    echo "Creating MySQL user and database..."
-mysql "-u$MYSQLU" "-p$MYSQLP" <<QUERY_INPUT
-GRANT USAGE ON * . * TO '$NAME'@'localhost' IDENTIFIED BY '$NAME' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
-CREATE DATABASE IF NOT EXISTS \`$NAME\`;
-GRANT ALL PRIVILEGES ON \`$NAME\`. * TO '$NAME'@'localhost';
+    echo "Creating MySQL \"$MYSQLU\" user and \"$MYSQLN\" database..."
+mysql "-u$MYSQLAU" "-p$MYSQLAP" <<QUERY_INPUT
+GRANT USAGE ON * . * TO '$MYSQLU'@'localhost' IDENTIFIED BY '$MYSQLP' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+CREATE DATABASE IF NOT EXISTS \`$MYSQLN\`;
+GRANT ALL PRIVILEGES ON \`$MYSQLN\`. * TO '$MYSQLU'@'localhost';
 QUERY_INPUT
     else
 	echo "Ommit creating MySQL user and database..."
@@ -155,13 +183,13 @@ QUERY_INPUT
 
     # Print results
     echo "PROJECT PATH: $VHOSTDOCROOT"
-    echo "PROJECT URL: http://$NAME"
+    echo "PROJECT URL: http://$VHOSTDOMAIN"
 
-    if [[ ! -z $MYSQLU ]] || [[ ! -z $MYSQLP ]]
+    if [[ ! -z $MYSQLAU ]] || [[ ! -z $MYSQLAP ]]
     then
-	echo "MYSQL USER: $NAME"
-	echo "MYSQL PASSWORD: $NAME"
-	echo "MYSQL DATABASE: $NAME"
+	echo "MYSQL USER: $MYSQLU"
+	echo "MYSQL PASSWORD: $MYSQLP"
+	echo "MYSQL DATABASE: $MYSQLN"
     fi
 }
 
@@ -202,19 +230,19 @@ function remove() {
     fi
 
     # If MySQL credentials are available, use them to remove db and user
-    if [[ ! -z $MYSQLU ]] || [[ ! -z $MYSQLP ]]
+    if [[ ! -z $MYSQLAU ]] || [[ ! -z $MYSQLAP ]]
     then
 	yes_no_pause "Do you want to remove MySQL \"$NAME\" database and \"$NAME\" user?"
 	if [ $? = 0 ]
 	then
-	    echo "Removing MySQL user and database..."
-mysql "-u$MYSQLU" "-p$MYSQLP" <<QUERY_INPUT
-GRANT USAGE ON * . * TO '$NAME'@'localhost';
-DROP USER '$NAME'@'localhost';
-DROP DATABASE IF EXISTS \`$NAME\`;
+	    echo "Removing MySQL \"$MYSQLU\" user and \"$MYSQLN\" database..."
+mysql "-u$MYSQLAU" "-p$MYSQLAP" <<QUERY_INPUT
+GRANT USAGE ON * . * TO '$MYSQLU'@'localhost';
+DROP USER '$MYSQLU'@'localhost';
+DROP DATABASE IF EXISTS \`$MYSQLN\`;
 QUERY_INPUT
 	else
-	    "Not removing MySQL \"$NAME\" database and \"$NAME\" user?"
+	    "Not removing MySQL \"$MYSQLN\" database and \"$MYSQLU\" user..."
 	fi
     else
 	echo "Ommit removing MySQL user and database..."
@@ -242,7 +270,7 @@ if [ ! -d $DOCROOT ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:d:u:p:" OPTION
+while getopts "hm:n:t:d:u:p:U:P:N:" OPTION
 do
   case $OPTION in
     h)
@@ -255,14 +283,26 @@ do
     n)
       NAME=$OPTARG
       ;;
+    t)
+      TLD=$OPTARG
+      ;;
     d)
       DOCROOT=$OPTARG
       ;;
     u)
-      MYSQLU=$OPTARG
+      MYSQLAU=$OPTARG
       ;;
     p)
+      MYSQLAP=$OPTARG
+      ;;
+    U)
+      MYSQLU=$OPTARG
+      ;;
+    P)
       MYSQLP=$OPTARG
+      ;;
+    N)
+      MYSQLN=$OPTARG
       ;;
     ?)
       usage
@@ -278,6 +318,32 @@ then
      exit 1
 fi
 
+# For db user fallback to $NAME
+if [[ -z $MYSQLU ]]
+then
+     MYSQLU=$NAME
+fi
+
+# For db password fallback to $NAME
+if [[ -z $MYSQLP ]]
+then
+     MYSQLP=$NAME
+fi
+
+# For db name fallback to $NAME
+if [[ -z $MYSQLN ]]
+then
+     MYSQLN=$NAME
+fi
+
+# If $TLD specified, use it as vhost domain
+if [[ ! -z $TLD ]]
+then
+     VHOSTDOMAIN="$NAME.$TLD"
+else
+     VHOSTDOMAIN="$NAME"
+fi
+
 # Virtual host file
 VHOSTFILE="/etc/apache2/sites-available/$NAME"
 
@@ -285,7 +351,7 @@ VHOSTFILE="/etc/apache2/sites-available/$NAME"
 VHOSTDOCROOT="$DOCROOT/$NAME"
 
 # Virtual host /etc/hosts line
-HOSTSLINE="127.0.0.1 $NAME"
+HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
 
 # Run in selected mode
 $MODE
