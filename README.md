@@ -24,7 +24,7 @@ OPTIONS:
     -m    Mode (required, "add" or "remove")
     -n    Project name (required, used as directory name and as domain name if -t is omitted)
     -t    TLD (optional, provide only if directory name differs from domain name)
-    -d    Document root (optional, "$DOCROOT" by default)
+    -d    Document root (optional, "/var/www" by default)
     -u    MySQL administrative user name (optional, ommit to avoid managing database)
     -p    MySQL administrative user password (optional, ommit to avoid managing database)
     -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
