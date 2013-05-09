@@ -82,10 +82,10 @@ function usage() {
 	$0 -m remove -n example -t loc
 
     -Add project "example.loc" and create database having "exampledbname" name, "exampledbuser" user and "exampledbpass" password:
-	$0 -m add -n example.loc -U exampledbuser -P exampledbpass -N exampledbname
+	$0 -m add -n example.loc -u mysqladminusername -p mysqladminuserpassword -U exampledbuser -P exampledbpass -N exampledbname
 
     -Remove project "example.loc" and optionaly remove database having "exampledbname" name, "exampledbuser" user and "exampledbpass" password:
-	$0 -m remove -n example.loc -U exampledbuser -P exampledbpass -N exampledbname
+	$0 -m remove -n example.loc -u mysqladminusername -p mysqladminuserpassword -U exampledbuser -P exampledbpass -N exampledbname
 EOF
 }
 
