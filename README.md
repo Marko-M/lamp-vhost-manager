@@ -3,6 +3,8 @@ LAMP Vhost Manager
 
 Easily manage LAMP name based virtual hosts for your web development projects.
 
+For more details you can visit [my article at Inchoo.net](http://inchoo.net/tools-frameworks/easily-manage-lamp-name-based-virtual-hosts/).
+
 Features
 --------
 * Two modes of operation, add and remove project
@@ -76,5 +78,3 @@ Removing MySQL user and database...
 Running "a2dissite example.loc"...
 Running "service apache2 restart"...
 </pre>
-
-For more details please visit [my article at Inchoo.net](http://inchoo.net/tools-frameworks/easily-manage-lamp-name-based-virtual-hosts/).
