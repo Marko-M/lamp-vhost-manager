@@ -3,7 +3,7 @@ LAMP Vhost Manager
 
 Easily manage LAMP name based virtual hosts for your web development projects.
 
-For more details you can visit [my article at Inchoo.net](http://inchoo.net/tools-frameworks/easily-manage-lamp-name-based-virtual-hosts/).
+For more details you can visit [my article at inchoo.net](http://inchoo.net/tools-frameworks/easily-manage-lamp-name-based-virtual-hosts/).
 
 Features
 --------
