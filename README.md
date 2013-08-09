@@ -32,6 +32,7 @@ OPTIONS:
     -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
+    -g    Create git repository inside project directory
 </pre>
 
 Example
