@@ -70,7 +70,7 @@ function usage() {
     -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
-    -g    Desired if create git repository in directory name
+    -g    Initialize empty git repository inside project directory
 
   Examples:
     -Add project "example.loc" and create database having "example.loc" user and password and name:
