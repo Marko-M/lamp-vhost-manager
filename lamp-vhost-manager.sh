@@ -29,6 +29,9 @@ MYSQLP=
 # Desired MySQL database name (enter to avoid having to use this argument)
 MYSQLN=
 
+# Initialize git repository
+GIT=
+
 ###############################################################################
 
 # Prints $1 and then exits after any key
@@ -67,6 +70,7 @@ function usage() {
     -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
+    -g    Desired if create git repository in directory name
 
   Examples:
     -Add project "example.loc" and create database having "example.loc" user and password and name:
@@ -96,6 +100,13 @@ function add() {
     then
 	echo "Creating \"$VHOSTDOCROOT\"..."
 	mkdir $VHOSTDOCROOT
+
+     # Create git repository
+      if $GIT; then
+        echo "Creating git repository in \"$VHOSTDOCROOT\"..."
+        git init $VHOSTDOCROOT
+      fi
+
     else
 	echo "\"$VHOSTDOCROOT\" already exists, so not creating..."
     fi
@@ -270,7 +281,7 @@ if [ ! -d $DOCROOT ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:t:d:u:p:U:P:N:" OPTION
+while getopts "hm:n:t:d:u:p:U:P:N:g" OPTION
 do
   case $OPTION in
     h)
@@ -303,6 +314,9 @@ do
       ;;
     N)
       MYSQLN=$OPTARG
+      ;;
+    g)
+      GIT= true
       ;;
     ?)
       usage
