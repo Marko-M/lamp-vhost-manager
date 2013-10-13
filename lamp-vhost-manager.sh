@@ -274,12 +274,6 @@ if [ "$(whoami)" != "root" ]
     exit_pause "Please call this script with elevated privileges."
 fi
 
-# Document root must exist to proceed
-if [ ! -d $DOCROOT ]
-    then
-    exit_pause "Document root directory doesn't exist."
-fi
-
 # Parse script arguments
 while getopts "hm:n:t:d:u:p:U:P:N:g" OPTION
 do
@@ -330,6 +324,12 @@ if [[ -z $DOCROOT ]] || [[ -z $NAME ]] || [[ $MODE != 'add' && $MODE != 'remove'
 then
      usage
      exit 1
+fi
+
+# Document root must exist to proceed
+if [ ! -d $DOCROOT ]
+    then
+    exit_pause "Document root directory doesn't exist."
 fi
 
 # For db user fallback to $NAME
