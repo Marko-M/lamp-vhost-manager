@@ -30,7 +30,7 @@ MYSQLP=
 MYSQLN=
 
 # Initialize git repository
-GIT=
+GIT=false
 
 ###############################################################################
 
@@ -102,7 +102,8 @@ function add() {
 	mkdir $VHOSTDOCROOT
 
      # Create git repository
-      if $GIT; then
+      if [ $GIT == true ]
+      then
         echo "Creating git repository in \"$VHOSTDOCROOT\"..."
         git init $VHOSTDOCROOT
       fi
