@@ -5,6 +5,9 @@
 # Default document root (change if neccessary)
 DOCROOT="/var/www"
 
+# Default log root (change if neccessary)
+LOGROOT="/var/log/apache2"
+
 # Directory name and domain name if $TLD is empty (enter to avoid having to use this argument)
 NAME=
 
@@ -112,6 +115,15 @@ function add() {
 	echo "\"$VHOSTDOCROOT\" already exists, so not creating..."
     fi
 
+    # Create virtualhost log root
+    if [ ! -d $VHOSTLOGROOT ]
+    then
+	echo "Creating \"$VHOSTLOGROOT\"..."
+	mkdir $VHOSTLOGROOT
+    else
+	echo "\"$VHOSTLOGROOT\" already exists, so not creating..."
+    fi
+
     # Detect user and group ownerships (for serving outside of /var/www)
     local DOCROOTUSER=$(stat -c "%U" $DOCROOT)
     local DOCROOTGROUP=$(stat -c "%G" $DOCROOT)
@@ -166,6 +178,8 @@ cat > $VHOSTFILE <<EOF
 	Order allow,deny
 	allow from all
     </Directory>
+    CustomLog $VHOSTLOGROOT/access.log combined
+    ErrorLog $VHOSTLOGROOT/error.log
 </VirtualHost>
 EOF
     else
@@ -220,6 +234,15 @@ function remove() {
 	fi
     else
 	echo "\"$VHOSTDOCROOT\" doesn't exist, so not offering to remove it..."
+    fi
+
+    # Remove virtualhost log root if it exists
+    if [ -d $VHOSTLOGROOT ]
+    then
+	echo "Removing \"$VHOSTLOGROOT\"..."
+	rm -fR $VHOSTLOGROOT
+    else
+	echo "Thereis no \"$VHOSTLOGROOT\", nothing remove..."
     fi
 
     # Remove line from /etc/hosts if it is there
@@ -364,6 +387,9 @@ VHOSTFILE="/etc/apache2/sites-available/$NAME"
 
 # Virtual host document root
 VHOSTDOCROOT="$DOCROOT/$NAME"
+
+# Virtual host log root
+VHOSTLOGROOT="$LOGROOT/$NAME"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
