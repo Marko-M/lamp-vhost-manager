@@ -334,7 +334,7 @@ do
       MYSQLN=$OPTARG
       ;;
     g)
-      GIT= true
+      GIT=true
       ;;
     ?)
       usage
