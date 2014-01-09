@@ -134,7 +134,7 @@ function add() {
     if [ "$DOCROOTUSER" != "$VHOSTDOCROOTUSER" ]
     then
     	echo "Chown \"$VHOSTDOCROOT\" to \"$DOCROOTUSER\"..."
-	chown $DOCROOTUSER $VHOSTDOCROOT
+	chown -R $DOCROOTUSER $VHOSTDOCROOT
     else
 	echo "\"$VHOSTDOCROOT\" already owned by user \"$DOCROOTUSER\", so not changing ownership..."
     fi
@@ -143,7 +143,7 @@ function add() {
     if [ "$DOCROOTGROUP" != "$VHOSTDOCROOTGROUP" ]
     then
     	echo "Chgrp \"$VHOSTDOCROOT\" to \"$DOCROOTGROUP\"..."
-	chgrp $DOCROOTGROUP $VHOSTDOCROOT
+	chgrp -R $DOCROOTGROUP $VHOSTDOCROOT
     else
 	echo "\"$VHOSTDOCROOT\" already owned by user \"$DOCROOTUSER\" from group \"$DOCROOTGROUP\", so not changing group ownership..."
     fi
