@@ -35,6 +35,9 @@ MYSQLN=
 # Initialize git repository
 GIT=false
 
+# Create CGI directory in document root
+CGI=false
+
 ###############################################################################
 
 # Prints $1 and then exits after any key
@@ -74,6 +77,7 @@ function usage() {
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
     -g    Initialize empty git repository inside project directory
+    -c    Create CGI directory in document root
 
   Examples:
     -Add project "example.loc" and create database having "example.loc" user and password and name:
@@ -122,6 +126,24 @@ function add() {
 	mkdir $VHOSTLOGROOT
     else
 	echo "\"$VHOSTLOGROOT\" already exists, so not creating..."
+    fi
+
+    if [ $CGI == true ]
+    then
+	echo "Creating \"$VHOSTCGIROOT\"..."
+	mkdir $VHOSTCGIROOT
+read -r -d '' CGIPATTERN <<EOF
+    ScriptAlias /cgi-bin/ $VHOSTCGIROOT/
+    <Directory "$VHOSTCGIROOT">
+	AllowOverride None
+	Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+	Order allow,deny
+	Allow from all
+    </Directory>
+EOF
+    else
+	echo "\"$VHOSTCGIROOT\" already exists, so not creating..."
+	CGIPATTERN=
     fi
 
     # Detect user and group ownerships (for serving outside of /var/www)
@@ -178,6 +200,7 @@ cat > $VHOSTFILE <<EOF
 	Order allow,deny
 	allow from all
     </Directory>
+    $CGIPATTERN
     CustomLog $VHOSTLOGROOT/access.log combined
     ErrorLog $VHOSTLOGROOT/error.log
 </VirtualHost>
@@ -299,7 +322,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:t:d:u:p:U:P:N:g" OPTION
+while getopts "hm:n:t:d:u:p:U:P:N:gc" OPTION
 do
   case $OPTION in
     h)
@@ -335,6 +358,9 @@ do
       ;;
     g)
       GIT=true
+      ;;
+    c)
+      CGI=true
       ;;
     ?)
       usage
@@ -390,6 +416,9 @@ VHOSTDOCROOT="$DOCROOT/$NAME"
 
 # Virtual host log root
 VHOSTLOGROOT="$LOGROOT/$NAME"
+
+# Virtual host CGI root
+VHOSTCGIROOT="$DOCROOT/$NAME/cgi-bin"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"

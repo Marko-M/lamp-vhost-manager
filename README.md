@@ -33,6 +33,7 @@ OPTIONS:
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
     -g    Initialize empty git repository inside project directory
+    -c    Create CGI directory in document root
 </pre>
 
 Example
