@@ -137,8 +137,9 @@ read -r -d '' CGIPATTERN <<EOF
     <Directory "$VHOSTCGIROOT">
 	AllowOverride None
 	Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-	Order allow,deny
-	Allow from all
+	#Order allow,deny
+	#Allow from all
+	Require all granted
     </Directory>
 EOF
     else
@@ -197,8 +198,9 @@ cat > $VHOSTFILE <<EOF
     <Directory $VHOSTDOCROOT/>
 	Options Indexes FollowSymLinks MultiViews
 	AllowOverride All
-	Order allow,deny
-	allow from all
+	#Order allow,deny
+	#allow from all
+	Require all granted
     </Directory>
     $CGIPATTERN
     CustomLog $VHOSTLOGROOT/access.log combined
@@ -409,7 +411,7 @@ else
 fi
 
 # Virtual host file
-VHOSTFILE="/etc/apache2/sites-available/$NAME"
+VHOSTFILE="/etc/apache2/sites-available/$NAME.conf"
 
 # Virtual host document root
 VHOSTDOCROOT="$DOCROOT/$NAME"

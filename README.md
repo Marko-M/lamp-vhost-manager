@@ -1,5 +1,5 @@
-LAMP Vhost Manager
-==================
+LAMP Vhost Manager - Apache 2.4 branch
+======================================
 
 Easily manage LAMP name based virtual hosts for your web development projects.
 
@@ -10,6 +10,7 @@ Features
 * Two modes of operation, add and remove project
 * Optionally creates MySQL user and database
 * Detects suphp module to create files with proper user and group ownership depending on configurable base document root
+* Supports later Debian and Ubuntu versions distributed with Apache 2.4 web server
 
 Usage
 -----
