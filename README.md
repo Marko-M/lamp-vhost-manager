@@ -1,4 +1,4 @@
-LAMP Vhost Manager - Apache 2.4 branch
+LAMP Vhost Manager - Apache 2.4
 ======================================
 
 Easily manage LAMP name based virtual hosts for your web development projects.
