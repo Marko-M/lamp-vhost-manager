@@ -2,42 +2,7 @@
 # Author: Marko Martinović
 # License: GPLv2
 
-# Default document root (change if neccessary)
-DOCROOT="/var/www"
-
-# Default log root (change if neccessary)
-LOGROOT="/var/log/apache2"
-
-# Directory name and domain name if $TLD is empty (enter to avoid having to use this argument)
-NAME=
-
-# Desired top level domain (enter to avoid having to use this argument)
-TLD=
-
-# Mode, add or remove (enter to avoid having to use this argument)
-MODE=
-
-# MySQL admin user name (enter to avoid having to use this argument)
-MYSQLAU=
-
-# MySQL admin user password (enter to avoid having to use this argument)
-MYSQLAP=
-
-# Desired MySQL database user (enter to avoid having to use this argument)
-MYSQLU=
-
-# Desired MySQL database password (enter to avoid having to use this argument)
-MYSQLP=
-
-# Desired MySQL database name (enter to avoid having to use this argument)
-MYSQLN=
-
-# Initialize git repository
-GIT=false
-
-# Create CGI directory in document root
-CGI=false
-
+source lamp-vhost-manager.cfg
 ###############################################################################
 
 # Prints $1 and then exits after any key
@@ -103,20 +68,20 @@ EOF
 # Adds virtual host and optionaly creates database.
 function add() {
     # Create virtualhost document root
-    if [ ! -d $VHOSTDOCROOT ]
+    if [ ! -d $PROJECTROOT ]
     then
-	echo "Creating \"$VHOSTDOCROOT\"..."
-	mkdir $VHOSTDOCROOT
+	echo "Creating \"$PROJECTROOT\"..."
+	mkdir -p $VHOSTDOCROOT
 
      # Create git repository
       if [ $GIT == true ]
       then
-        echo "Creating git repository in \"$VHOSTDOCROOT\"..."
-        git init $VHOSTDOCROOT
+        echo "Creating git repository in \"$PROJECTROOT\"..."
+        git init $PROJECTROOT
       fi
 
     else
-	echo "\"$VHOSTDOCROOT\" already exists, so not creating..."
+	echo "\"$PROJECTROOT\" already exists, so not creating..."
     fi
 
     # Create virtualhost log root
@@ -156,16 +121,16 @@ EOF
     if [ "$DOCROOTUSER" != "$VHOSTDOCROOTUSER" ]
     then
     	echo "Chown \"$VHOSTDOCROOT\" to \"$DOCROOTUSER\"..."
-	chown -R $DOCROOTUSER $VHOSTDOCROOT
+	chown -R $DOCROOTUSER $PROJECTROOT
     else
-	echo "\"$VHOSTDOCROOT\" already owned by user \"$DOCROOTUSER\", so not changing ownership..."
+	echo "\"$PROJECTROOT\" already owned by user \"$DOCROOTUSER\", so not changing ownership..."
     fi
 
     # Chgrp virtualhost document root to group owning document root if neccessary
     if [ "$DOCROOTGROUP" != "$VHOSTDOCROOTGROUP" ]
     then
     	echo "Chgrp \"$VHOSTDOCROOT\" to \"$DOCROOTGROUP\"..."
-	chgrp -R $DOCROOTGROUP $VHOSTDOCROOT
+	chgrp -R $DOCROOTGROUP $PROJECTROOT
     else
 	echo "\"$VHOSTDOCROOT\" already owned by user \"$DOCROOTUSER\" from group \"$DOCROOTGROUP\", so not changing group ownership..."
     fi
@@ -231,7 +196,8 @@ QUERY_INPUT
     service apache2 restart>/dev/null 2>&1
 
     # Print results
-    echo "PROJECT PATH: $VHOSTDOCROOT"
+    echo "PROJECT PATH: $PROJECTROOT"
+    echo "VIRTUAL HOST PATH: $VHOSTDOCROOT"
     echo "PROJECT URL: http://$VHOSTDOMAIN"
 
     if [[ ! -z $MYSQLAU ]] || [[ ! -z $MYSQLAP ]]
@@ -244,19 +210,19 @@ QUERY_INPUT
 
 function remove() {
     # Remove virtualhost document root if it exists
-    if [ -d $VHOSTDOCROOT ]
+    if [ -d $PROJECTROOT ]
     then
 	# Ask for confirmation
-	yes_no_pause "Do you want to remove \"$VHOSTDOCROOT\"?"
+	yes_no_pause "Do you want to remove \"$PROJECTROOT\"?"
 	if [ $? = 0 ]
 	then
-	    echo "Removing \"$VHOSTDOCROOT\"..."
-	    rm -fR $VHOSTDOCROOT
+	    echo "Removing \"$PROJECTROOT\"..."
+	    rm -fR $PROJECTROOT
 	else
-	    echo "NOT removing \"$VHOSTDOCROOT\"..."
+	    echo "NOT removing \"$PROJECTROOT\"..."
 	fi
     else
-	echo "\"$VHOSTDOCROOT\" doesn't exist, so not offering to remove it..."
+	echo "\"$PROJECTROOT\" doesn't exist, so not offering to remove it..."
     fi
 
     # Remove virtualhost log root if it exists
@@ -411,14 +377,17 @@ fi
 # Virtual host file
 VHOSTFILE="/etc/apache2/sites-available/$NAME"
 
+# Project root
+PROJECTROOT="$DOCROOT/$NAME"
+
 # Virtual host document root
-VHOSTDOCROOT="$DOCROOT/$NAME"
+VHOSTDOCROOT="$PROJECTROOT/www"
 
 # Virtual host log root
 VHOSTLOGROOT="$LOGROOT/$NAME"
 
 # Virtual host CGI root
-VHOSTCGIROOT="$DOCROOT/$NAME/cgi-bin"
+VHOSTCGIROOT="$PROJECTROOT/cgi-bin"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
