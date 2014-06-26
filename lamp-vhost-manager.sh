@@ -8,7 +8,7 @@ source lamp-vhost-manager.cfg
 # Prints $1 and then exits after any key
 function exit_pause() {
     echo -e "$1.\n"
-    read -p "Press any key to EXIT"
+    read -s -n 1 -p "Press any key to EXIT"
     exit 1
 }
 
