@@ -338,7 +338,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:b:t:d:u:p:U:P:N:b:gc" OPTION
+while getopts "hm:n:t:d:u:p:U:P:N:b:gc" OPTION
 do
   case $OPTION in
     h)
