@@ -38,6 +38,9 @@ GIT=false
 # Create CGI directory in document root
 CGI=false
 
+# Desired public folder name (enter to avoid having to use this argument)
+PUBLICFOLDER=
+
 ###############################################################################
 
 # Prints $1 and then exits after any key
@@ -78,6 +81,7 @@ function usage() {
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
     -g    Initialize empty git repository inside project directory
     -c    Create CGI directory in document root
+    -b    Create public folder
 
   Examples:
     -Add project "example.loc" and create database having "example.loc" user and password and name:
@@ -146,6 +150,18 @@ EOF
 	CGIPATTERN=
     fi
 
+    # Create public directory
+    if [ "$VHOSTDOCROOT/" != "$VHOSTPUBLICROOT" ]
+    then
+      if [ ! -d $VHOSTPUBLICROOT ]
+      then
+      echo "Creating \"$VHOSTPUBLICROOT\"..."
+      mkdir $VHOSTPUBLICROOT
+      else
+      echo "\"$VHOSTPUBLICROOT\" already exists, so not creating..."
+      fi
+    fi
+
     # Detect user and group ownerships (for serving outside of /var/www)
     local DOCROOTUSER=$(stat -c "%U" $DOCROOT)
     local DOCROOTGROUP=$(stat -c "%G" $DOCROOT)
@@ -189,12 +205,12 @@ cat > $VHOSTFILE <<EOF
     ServerAdmin webmaster@$VHOSTDOMAIN
     ServerName $VHOSTDOMAIN
 
-    DocumentRoot $VHOSTDOCROOT
+    DocumentRoot $VHOSTPUBLICROOT
     <Directory />
 	Options FollowSymLinks
 	AllowOverride None
     </Directory>
-    <Directory $VHOSTDOCROOT/>
+    <Directory $VHOSTPUBLICROOT/>
 	Options Indexes FollowSymLinks MultiViews
 	AllowOverride All
 	Order allow,deny
@@ -322,7 +338,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:t:d:u:p:U:P:N:gc" OPTION
+while getopts "hm:n:b:t:d:u:p:U:P:N:b:gc" OPTION
 do
   case $OPTION in
     h)
@@ -355,6 +371,9 @@ do
       ;;
     N)
       MYSQLN=$OPTARG
+      ;;
+    b)
+      PUBLICFOLDER=$OPTARG
       ;;
     g)
       GIT=true
@@ -409,7 +428,7 @@ else
 fi
 
 # Virtual host file
-VHOSTFILE="/etc/apache2/sites-available/$NAME"
+VHOSTFILE="/etc/apache2/sites-available/$NAME.conf"
 
 # Virtual host document root
 VHOSTDOCROOT="$DOCROOT/$NAME"
@@ -419,6 +438,9 @@ VHOSTLOGROOT="$LOGROOT/$NAME"
 
 # Virtual host CGI root
 VHOSTCGIROOT="$DOCROOT/$NAME/cgi-bin"
+
+# Virtual host public root
+VHOSTPUBLICROOT="$VHOSTDOCROOT/$PUBLICFOLDER"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
