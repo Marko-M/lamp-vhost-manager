@@ -409,7 +409,7 @@ else
 fi
 
 # Virtual host file
-VHOSTFILE="/etc/apache2/sites-available/$NAME"
+VHOSTFILE="/etc/apache2/sites-available/$NAME.conf"
 
 # Virtual host document root
 VHOSTDOCROOT="$DOCROOT/$NAME"
