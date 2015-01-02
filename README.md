@@ -27,14 +27,16 @@ OPTIONS:
     -m    Mode (required, "add" or "remove")
     -n    Project name (required, used as directory name and as domain name if -t is omitted)
     -t    TLD (optional, provide only if directory name differs from domain name)
-    -d    Document root (optional, "/var/www" by default)
+    -d    Document root (optional, defaults to "/var/www")
+    -o    HTTP port (optional, defaults to port 80)
+    -S    Create HTTPS virtual host (optional, defaults to no, requires ssl-cert package installed)
+    -s    HTTPS port (optional, defaults to port 443, to be used with -S option)
     -u    MySQL administrative user name (optional, ommit to avoid managing database)
     -p    MySQL administrative user password (optional, ommit to avoid managing database)
-    -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default)
-    -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default)
-    -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default)
-    -g    Initialize empty git repository inside project directory
-    -c    Create CGI directory in document root
+    -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
+    -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
+    -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
+    -g    Initialize empty git repository inside project directory (optional, defaults to no)
 </pre>
 
 Example
