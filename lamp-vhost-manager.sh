@@ -76,7 +76,7 @@ function usage() {
     -m    Mode (required, "add" or "remove")
     -n    Project name (required, used as directory name and as domain name if -t is omitted)
     -t    TLD (optional, provide only if directory name differs from domain name)
-    -d    Document root (optional, defaults to "$DOCROOT")
+    -d    Document root directory (optional, defaults to "$DOCROOT")
     -o    HTTP port (optional, defaults to port 80)
     -S    Create HTTPS virtual host (optional, defaults to no, requires ssl-cert package installed)
     -s    HTTPS port (optional, defaults to port 443, to be used with -S option)
@@ -86,6 +86,7 @@ function usage() {
     -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
     -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
     -g    Initialize empty git repository inside project directory (optional, defaults to no)
+    -r    Log files root directory (optional, defaults to /var/log/apache2/<Project Name>)
 
 
   Examples:
@@ -360,7 +361,7 @@ if [ "$(whoami)" != "root" ]
 fi
 
 # Parse script arguments
-while getopts "hm:n:t:d:u:p:U:P:N:o:s:gcS" OPTION
+while getopts "hm:n:t:d:u:p:U:P:N:o:s:r:gcS" OPTION
 do
   case $OPTION in
     h)
@@ -399,6 +400,9 @@ do
         ;;
     s)
         PORTSSL=$OPTARG
+        ;;
+    r)
+        VHOSTLOGROOT=$OPTARG
         ;;
     g)
         GIT=true
@@ -463,14 +467,17 @@ then
      VHOSTFILESSL="/etc/apache2/sites-available/$NAME-ssl.conf"
 fi
 
+# For virtual host log root fallback to $LOGROOT/$NAME
+if [[ -z $VHOSTLOGROOT ]]
+then
+     VHOSTLOGROOT="$LOGROOT/$NAME"
+fi
+
 # Virtual host file
 VHOSTFILE="/etc/apache2/sites-available/$NAME.conf"
 
 # Virtual host document root
 VHOSTDOCROOT="$DOCROOT/$NAME"
-
-# Virtual host log root
-VHOSTLOGROOT="$LOGROOT/$NAME"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
