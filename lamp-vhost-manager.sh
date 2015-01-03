@@ -74,19 +74,19 @@ function usage() {
   OPTIONS:
     -h    Show this message
     -m    Mode (required, "add" or "remove")
-    -n    Project name (required, used as directory name and as domain name if -t is omitted)
+    -n    Project name (required, assumed it contains domain if -t is omitted)
     -t    TLD (optional, provide only if directory name differs from domain name)
-    -d    Document root directory (optional, defaults to "$DOCROOT")
+    -d    Document root directory (optional, defaults to "$DOCROOT/<Project Name>")
     -o    HTTP port (optional, defaults to port 80)
     -S    Create HTTPS virtual host (optional, defaults to no, requires ssl-cert package installed)
     -s    HTTPS port (optional, defaults to port 443, to be used with -S option)
     -u    MySQL administrative user name (optional, ommit to avoid managing database)
     -p    MySQL administrative user password (optional, ommit to avoid managing database)
-    -U    Desired MySQL database user name (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
-    -P    Desired MySQL database password (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
-    -N    Desired MySQL database name (optional, to be used with -u and -p, project name by default, trimmed to 16 characters)
+    -U    Desired MySQL database user name (optional, to be used with -u and -p, <Project Name> by default, trimmed to 16 characters)
+    -P    Desired MySQL database password (optional, to be used with -u and -p, <Project Name> by default, trimmed to 16 characters)
+    -N    Desired MySQL database name (optional, to be used with -u and -p, <Project Name> by default, trimmed to 16 characters)
     -g    Initialize empty git repository inside project directory (optional, defaults to no)
-    -r    Log files root directory (optional, defaults to /var/log/apache2/<Project Name>)
+    -r    Log files root directory (optional, defaults to "$LOGROOT/<Project Name>")
 
 
   Examples:
@@ -385,7 +385,7 @@ do
         TLD=$OPTARG
         ;;
     d)
-        DOCROOT=$OPTARG
+        VHOSTDOCROOT=$OPTARG
         ;;
     u)
         MYSQLAU=$OPTARG
@@ -480,11 +480,14 @@ then
      VHOSTLOGROOT="$LOGROOT/$NAME"
 fi
 
+# For virtual host document root root fallback to $DOCROOT/$NAME
+if [[ -z $VHOSTDOCROOT ]]
+then
+     VHOSTDOCROOT="$DOCROOT/$NAME"
+fi
+
 # Virtual host file
 VHOSTFILE="/etc/apache2/sites-available/$NAME.conf"
-
-# Virtual host document root
-VHOSTDOCROOT="$DOCROOT/$NAME"
 
 # Virtual host /etc/hosts line
 HOSTSLINE="127.0.0.1 $VHOSTDOMAIN"
