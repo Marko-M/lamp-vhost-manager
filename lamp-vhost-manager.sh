@@ -249,13 +249,20 @@ CREATE DATABASE IF NOT EXISTS \`$MYSQLN\`;
 GRANT ALL PRIVILEGES ON \`$MYSQLN\`. * TO '$MYSQLU'@'localhost';
 QUERY_INPUT
     else
-	    echo "Omit creating MySQL user and database..."
+		echo "Omit creating MySQL user and database..."
     fi
 
     # Enable virtual host
     echo "Running \"a2ensite $NAME\"..."
     a2ensite $NAME>/dev/null 2>&1
-
+    
+    # Enable SSL virtual host if required
+    if [ $SSL == true ]
+    then
+        echo "Running \"a2ensite $NAME-ssl\"..."
+        a2ensite $NAME-ssl>/dev/null 2>&1
+    fi
+    
     # Restart apache service
     echo "Running \"service apache2 restart\"..."
     service apache2 restart>/dev/null 2>&1
